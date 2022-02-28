@@ -1,0 +1,15 @@
+{% load static %}
+<link rel='stylesheet' href="{% static 'css/navbar.css' %}"/>
+<nav>
+    <div class="topnav">
+        <a href="{% url 'home' %}">Strona główna</a>
+        <a href="{% url 'meal_of_the_day' %}">Danie Dnia</a>
+        <a href="{% url 'menu' %}">Menu</a>
+        <a href="{% url 'gallery' %}">Galeria</a>
+        <a href="{% url 'reservations' %}">Rezerwacje</a>
+        <a href="{% url 'about' %}">O nas</a>
+        {% if user.is_superuser %}
+        <a href="{% url 'res-statistics' %}">Statystyki</a>
+        {% endif %}
+    </div>
+</nav>

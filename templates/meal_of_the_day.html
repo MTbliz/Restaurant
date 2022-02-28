@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel='stylesheet' href="{% static 'css/meal_of_the_day.css' %}"/>
+<div class="center">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 item">
+                <h2>Danie Dnia</h2>
+                {% for meal in meals_of_the_day %}
+                <ul>
+                    <div>
+                        <span class="title">{{ meal.title }} </span>
+                        <span class="price">{{ meal.price }} zł </span>
+                    </div>
+                    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                    <img style="float:right;" src="{{ meal.img.url }}">
+                </ul>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

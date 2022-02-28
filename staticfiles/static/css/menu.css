@@ -1,0 +1,30 @@
+.menu{
+margin-top: 5%;
+background-color:rgba(255,255,255,0.8);
+width: 70%;
+margin-left: 15%;
+margin-bottom:5px;
+font-family: Palatino
+}
+
+.menu ul {
+  padding:0;
+  list-style:none;
+  //margin-bottom:5px;
+}
+
+
+.menu li {
+display:table;
+width: 100%;}
+
+.price {
+text-align: right;
+display:table-cell;
+}
+
+.title{
+text-align: left;
+display:table-cell;
+max-width:200px
+}

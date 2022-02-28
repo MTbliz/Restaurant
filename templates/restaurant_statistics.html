@@ -1,0 +1,333 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.2/dist/chart.min.js"></script>
+<div class="container" style="background-color:rgba(255,255,255,0.8); margin-top: 1%;">
+    <div class="row">
+        <div class="col-sm-6">
+            <canvas id="myChart" width="700" height="400"></canvas>
+        </div>
+        <div class="col-sm-6">
+            <canvas id="myChart2" width="700" height="400"></canvas>
+        </div>
+    </div>
+        <div class="row">
+        <div class="col-sm-8">
+            <canvas id="myChart3" width="800" height="400"></canvas>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+var backgroundColors = [
+            'rgba(255, 99, 132, 0.5)',
+            'rgba(54, 162, 235, 0.5)',
+            'rgba(255, 206, 86, 0.5)',
+            'rgba(75, 192, 192, 0.5)',
+            'rgba(153, 102, 255, 0.5)',
+            'rgba(255, 159, 64, 0.5)' ];
+
+var borderColors = [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'];
+
+const coordinates = {
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+}
+
+function getYearMonth(date) {
+    var year = new Date(date).getFullYear()
+    var month = ("0" + (new Date(date).getMonth() + 1)).slice(-2)
+    var year_month = year+"-"+month
+    return year_month
+}
+
+
+function resetChart1(){
+    myChart.config.data.labels = labels;
+    myChart.config.data.datasets[0].data =  datasets;
+    myChart.config.data.datasets[0].label = '# Visitors per Month';
+    myChart.config.data.datasets[0].borderColor = borderColors;
+    myChart.config.data.datasets[0].backgroundColor = backgroundColors;
+    myChart.update();
+}
+
+function resetChart2(){
+    myChart2.config.data.labels = labels2;
+    myChart2.config.data.datasets[0].data =  datasets2;
+    myChart2.config.data.datasets[0].label = '# Reservations per Month';
+    myChart2.config.data.datasets[0].borderColor = borderColors;
+    myChart2.config.data.datasets[0].backgroundColor = backgroundColors;
+    myChart2.update();
+}
+
+function mousemoveHandler(chart, ctx, mousemove){
+    if(chart.config.data.datasets[0].label === '# Visitors per Day' || chart.config.data.datasets[0].label === '# Reservations per Day')  {
+        const x = mousemove.offsetX;
+        const y = mousemove.offsetY;
+        if(x > coordinates.left && x < coordinates.right && y > coordinates.top && y < coordinates.bottom){
+            ctx.canvas.style.cursor = 'pointer';
+        } else {
+            ctx.canvas.style.cursor = 'default';
+        };
+    };
+};
+
+function clickButtonHandler(chart, ctx, click){
+    const x = click.offsetX;
+    const y = click.offsetY;
+    if(x > coordinates.left && x < coordinates.right && y > coordinates.top && y < coordinates.bottom){
+        if(chart.config.data.datasets[0].label === '# Visitors per Day')  {
+            resetChart1();
+            ctx.canvas.style.cursor = 'default';
+        } else if (chart.config.data.datasets[0].label === '# Reservations per Day') {
+            resetChart2();
+            ctx.canvas.style.cursor = 'default';
+        } else {
+            ctx.canvas.style.cursor = 'default';
+        };
+    };
+};
+
+function changeChart(myChart, data_labels, data_sets, backgroundColor, borderColor, chart_label){
+    myChart.config.data.labels = data_labels;
+    myChart.config.data.datasets[0].data =  data_sets;
+    myChart.config.data.datasets[0].label = chart_label;
+    // #### Musi być przekazany jako lista ####
+    myChart.config.data.datasets[0].borderColor = [borderColor];
+    myChart.config.data.datasets[0].backgroundColor = [backgroundColor];
+    myChart.update();
+}
+
+const resetButton = {
+    id: 'resetButton',
+    beforeDraw(chart, args, options){
+    if(chart.config.data.datasets[0].label === '# Visitors per Day' || chart.config.data.datasets[0].label === '# Reservations per Day')  {
+            const { ctx, chartArea: {top, bottom, left, right, width, height} } =
+                chart;
+            ctx.save();
+
+            const text = 'Back'
+            const thickBorder = 3;
+            const textWidth =ctx.measureText(text).width;
+
+            //draw background
+            ctx.fillStyle = 'rgba(255, 26, 104, 0.2)';
+            ctx.fillRect(right-(textWidth+1+10), 5, textWidth+10, 20);
+
+            //draw text
+            ctx.fillStyle = '#666';
+            ctx.font = '12px Arial';
+            ctx.fillText(text, right-(textWidth+1+5), 15);
+
+            //draw border
+            ctx.lineWidth = thickBorder + 'px';
+            ctx.strokeStyle = 'rgba(255, 26, 104, 1)';
+            ctx.strokeRect(right-(textWidth+1+10), 5, textWidth+10, 20);
+
+            //console.log(coordinates);
+            coordinates.top = 5;
+            coordinates.bottom = 25;
+            coordinates.left = right - (textWidth + 1 + 10);
+            coordinates.right = right;
+            ctx.restore();
+        };
+    }
+};
+
+// #### Chart1 ####
+
+var labels = [{% for user in users %}'{{user.year_month|date:'Y-m'}}',{% endfor %}];
+var datasets = [{% for user in users %}'{{user.total}}',{% endfor %}];
+var visits = [{% for user in users_all %}  {date:'{{user.year_month_day|date:'Y-m-d'}}', total: '{{user.total}}'},{% endfor %}];
+
+const data = {
+    labels: labels,
+    datasets: [{
+        label: '# Visitors per Month',
+        data: datasets,
+        backgroundColor: backgroundColors,
+        borderColor: borderColors,
+        borderWidth: 1
+    }]
+};
+
+const config = {
+    type: 'line',
+    data: data,
+    options: {
+        plugins: {
+            tooltip: {
+                yAlign: 'bottom'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        onClick(evt) {
+            if(myChart.config.data.datasets[0].label === '# Visitors per Month'){
+                const points = myChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
+                    if (points.length) {
+                        const firstPoint = points[0];
+                        const selected_date = myChart.data.labels[firstPoint.index]; //label
+                        const value = myChart.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
+                        const backgroundColor = myChart.data.datasets[0].backgroundColor[firstPoint.index];
+                        const borderColor = myChart.data.datasets[0].borderColor[firstPoint.index];
+                        const data_labels = visits.filter(visit =>getYearMonth(visit.date) == selected_date).map(item => item.date);;
+                        const data_sets = visits.filter(visit =>getYearMonth(visit.date) == selected_date).map(item => item.total);
+                        changeChart(myChart, data_labels, data_sets, backgroundColor, borderColor, '# Visitors per Day');
+                    }
+            }
+        }
+    },
+    plugins:[resetButton],
+}
+
+const ctx = document.getElementById('myChart').getContext('2d');
+ctx.canvas.addEventListener('mousemove', (e) => {
+    myChart.resize();
+    mousemoveHandler(myChart, ctx, e)
+});
+ctx.canvas.addEventListener('click', (e) => {
+    myChart.resize();
+    clickButtonHandler(myChart, ctx, e)
+});
+
+const myChart = new Chart(ctx, config);
+
+
+
+// #### Chart2 ####
+
+var labels2 = [{% for item in reservations %}'{{item.year_month|date:'Y-m'}}',{% endfor %}];
+var datasets2 = [{% for item in reservations %}'{{item.total}}',{% endfor %}];
+var reservations = [{% for reservation in reservations_all %}  {date:'{{reservation.year_month_day|date:'Y-m-d'}}', total: '{{reservation.total}}'},{% endfor %}];
+
+
+
+const data2 = {
+    labels: labels2,
+    datasets: [{
+        label: '# Reservations per Month',
+        data: datasets2,
+        backgroundColor: backgroundColors,
+        borderColor: borderColors,
+        borderWidth: 1
+    }]
+};
+
+const config2 = {
+    type: 'bar',
+    data: data2,
+    options: {
+        plugins: {
+            tooltip: {
+                yAlign: 'bottom'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        onClick(evt) {
+            if(myChart2.config.data.datasets[0].label === '# Reservations per Month'){
+                const points = myChart2.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
+                    if (points.length) {
+                        const firstPoint = points[0];
+                        const selected_date = myChart2.data.labels[firstPoint.index]; //label
+                        const value = myChart2.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
+                        const backgroundColor = myChart2.data.datasets[0].backgroundColor[firstPoint.index];
+                        const borderColor = myChart2.data.datasets[0].borderColor[firstPoint.index];
+                        const data_labels = reservations.filter(reservation =>getYearMonth(reservation.date) == selected_date).map(item => item.date);;
+                        const data_sets = reservations.filter(reservation =>getYearMonth(reservation.date) == selected_date).map(item => item.total);
+                        changeChart(myChart2, data_labels, data_sets, backgroundColor, borderColor, '# Reservations per Day');
+                    }
+            }
+        }
+    },
+    plugins:[resetButton],
+}
+
+const ctx2 = document.getElementById('myChart2').getContext('2d');
+ctx2.canvas.addEventListener('mousemove', (e) => {
+    mousemoveHandler(myChart2, ctx2, e)
+    myChart2.resize();
+});
+ctx2.canvas.addEventListener('click', (e) => {
+    clickButtonHandler(myChart2, ctx2, e)
+    myChart2.resize();
+});
+const myChart2 = new Chart(ctx2, config2)
+
+
+// #### Chart3 ####
+
+var labels3 = [{% for item in meal_categories %}'{{item.category}}',{% endfor %}];
+var datasets3 = [{% for item in meal_categories %}'{{item.total}}',{% endfor %}];
+const ctx3 = document.getElementById('myChart3').getContext('2d');
+const myChart3 = new Chart(ctx3, {
+    type: 'pie',
+    data: {
+        labels: labels3,
+        datasets: [{
+            label: '# Meals per Category',
+            data: datasets3,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(153, 102, 255, 0.5)',
+                'rgba(255, 255, 153, 0.5)',
+                'rgba(205, 2, 200, 0.5)',
+                'rgba(51, 153, 102, 0.5)',
+                'rgba(204, 255, 51, 0.5)',
+                'rgba(255, 153, 102, 0.5)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 255, 153, 1)',
+                'rgba(205, 2, 200, 1)',
+                'rgba(51, 153, 102)',
+                'rgba(204, 255, 51, 1)',
+                'rgba(255, 153, 102, 1)'
+            ],
+            borderWidth: 1,
+        }]
+    },
+    options: {
+        plugins: {
+            legend: {
+                position: 'right'
+            }
+        },
+        responsive: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+
+
+</script>
+{% endblock %}

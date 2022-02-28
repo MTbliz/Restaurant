@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel='stylesheet' href="{% static 'css/reservations.css' %}"/>
+{% if first_name %}
+<center id="email-confirmation">
+    </br>
+    <h2>Dziękujemy za złożenie rezerwacji.</h2>
+    <p>Nasz pracownik skontaktuje się z Państwem.</p>
+    </br>
+</center>
+{% else %}
+<div class="container res-form">
+    <form action="." method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form}}
+        </div>
+        <div class="form-group">
+            <input class="save-button" type="submit" value="Save">
+        </div>
+    </form>
+</div>
+{% endif %}
+{% endblock %}

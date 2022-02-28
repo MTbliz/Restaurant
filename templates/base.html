@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coding for Entrepreneurs is doing Try Django</title>
+    <link rel='stylesheet' href="{% static 'css/main.css' %}"/>
+<body id="bg" style="background-image: url('{% static 'img/restaurant.jpg' %}')";>
+<div id="page-container">
+    <div id="content-wrap">
+        {% include 'navbar.html' %}
+        {% block content %}
+        replace me1
+        {% endblock %}
+    </div>
+    {% include 'footer.html' %}
+</div>
+</body>
+
+
+</html>

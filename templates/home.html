@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel='stylesheet' href="{% static 'css/news.css' %}"/>
+<div class="center">
+    {% if news %}
+    <div class="container">
+        {% for one_news in news %}
+        <!-- If news has image show it. If news hasn't got img show different div-->
+        {% if one_news.img %}
+            <div class="row">
+                <div class="col-md-12 item" style="margin-top:1%;">
+                    <span class="title">{{ one_news.title }} </span>
+                    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 item" style="text-align: justify">
+                    <div>{{ one_news.description }}</div>
+                </div>
+                <div class="col-md-6 item" style="margin-bottom:3%;">
+                    <img style="float:right;" src="{{ one_news.img.url }}">
+                </div>
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="col-md-12 item" style="margin-top:1%;">
+                    <span class="title">{{ one_news.title }} </span>
+                    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 item" style="text-align: justify; margin-bottom:3%;">
+                    <div >{{ one_news.description }}</div>
+                </div>
+            </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

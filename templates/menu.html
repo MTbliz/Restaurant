@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/menu.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
+<div class="menu">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 item">
+                <div class="row">
+                    <div class="col-md-12 item">
+                        <h3>Zupy</h3>
+                        {% for soup_meal in soup_meals %}
+                        <ul>
+                            <li><a class="title">{{ soup_meal.title }} </a><a class="price">{{ soup_meal.price }} zł</a></li>
+                        </ul>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-12 item">
+                        <h3>Przystawki Zimne</h3>
+                        {% for cold_appetizer in cold_appetizers %}
+                        <ul>
+                            <li><a class="title">{{ cold_appetizer.title }} </a><a class="price">{{ cold_appetizer.price }} zł</a></li>
+                        </ul>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 item">
+                <h3>Przystawki Gorące </h3>
+                {% for hot_appetizer in hot_appetizers %}
+                <ul>
+                    <li><a class="title">{{ hot_appetizer.title }} </a><a class="price">{{ hot_appetizer.price }} zł</a></li>
+                </ul>
+                {% endfor %}
+            </div>
+        </div>
+        <h3>Mięsa </h3>
+        <div class="row">
+            <div class="col-md-12 item" style="column-count: 2;">
+                {% for meat_meal in meat_meals %}
+                <ul>
+                    <li><a class="title">{{ meat_meal.title }} </a><a class="price">{{ meat_meal.price }} zł</a></li>
+                </ul>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 item">
+                <h3>Zestawy</h3>
+                {% for set in sets %}
+                <ul>
+                    <li><a class="title">{{ set.title }} </a><a class="price">{{ set.price }} zł</a></li>
+                </ul>
+                {% endfor %}
+            </div>
+            <div class="col-md-6 item">
+                <h3>Sałaty</h3>
+                {% for salad in salads %}
+                <ul>
+                    <li><a class="title">{{ salad.title }} </a><a class="price">{{ salad.price }} zł</a></li>
+                </ul>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 item">
+                <h3>Makarony</h3>
+                {% for pasta_meal in pasta_meals %}
+                <ul>
+                    <li><a class="title">{{ pasta_meal.title }} </a><a class="price">{{ pasta_meal.price }} zł</a></li>
+                </ul>
+                {% endfor %}
+            </div>
+            <div class="col-md-6 item">
+                <h3>Ryby</h3>
+                {% for fish_meal in fish_meals %}
+                <ul>
+                    <li><a class="title">{{ fish_meal.title }} </a><a class="price">{{ fish_meal.price }} zł</a></li>
+                </ul>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 item">
+                <h3>Desery</h3>
+                {% for dessert in desserts %}
+                <ul>
+                    <li><a class="title">{{ dessert.title }} </a><a class="price">{{ dessert.price }} zł</a></li>
+                </ul>
+                {% endfor %}
+            </div>
+            <div class="col-md-6 item">
+                <h3>Dodatki</h3>
+                {% for addition in additions %}
+                <ul>
+                    <li><a class="title">{{ addition.title }} </a><a class="price">{{ addition.price }} zł</a></li>
+                </ul>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
